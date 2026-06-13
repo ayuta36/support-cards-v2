@@ -1,0 +1,361 @@
+/* ============================================================
+   サポートカード style.css
+   ------------------------------------------------------------
+   編集ガイド:
+   1. 色を変えたい        → 下の「デザイントークン」の変数を変更
+   2. 文字サイズを変えたい → 「タイポグラフィ」セクション
+   3. 各画面の見た目      → コメントで画面ごとに区切ってあります
+   ============================================================ */
+
+/* ---- デザイントークン(アプリ全体で使う色・影・角丸の定義) ---- */
+:root{
+  --bg:#F6F3ED;            /* 背景(あたたかい紙の色) */
+  --card:#FFFFFF;          /* カードの白 */
+  --ink:#33302B;           /* 文字色 */
+  --sub:#797367;           /* 補足の文字色 */
+  --faint:#736D5E;          /* WCAG AA(4.65:1)合格 */         /* さらに薄い文字色 */
+  --line:#E2DDD2;          /* 枠線 */
+  --teal:#2F8F83;          /* メインカラー */
+  --red:#E05B4B;           /* 緊急 */
+  --danger:#C0584B;        /* 削除など */
+
+  --radius-s:16px; --radius-m:24px; --radius-l:30px;
+
+  /* 重ねた影で奥行きを出す(上質に見えるポイント) */
+  --shadow-1:0 1px 2px rgba(62,52,32,.05), 0 4px 14px rgba(62,52,32,.07);
+  --shadow-2:0 2px 4px rgba(62,52,32,.08), 0 10px 28px rgba(62,52,32,.12);
+
+  --font:'Hiragino Maru Gothic ProN','BIZ UDGothic','Yu Gothic',system-ui,sans-serif; /* 端末内のフォントのみ使用(外部接続ゼロ) */
+}
+
+/* ---- ダークモード(端末の設定に自動で合わせます) ---- */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1E1C19; --card:#2A2723; --ink:#F0EDE5; --sub:#B5AFA3; --faint:#9A958A;
+    --line:#3C3831;
+    --shadow-1:0 1px 2px rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.3);
+    --shadow-2:0 2px 4px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.4);
+  }
+}
+
+/* ---- ベース ---- */
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink); min-height:100vh;
+  font-family:var(--font); font-weight:500;
+  -webkit-font-smoothing:antialiased;
+  /* やわらかい水玉模様の背景 */
+  background-image:
+    radial-gradient(rgba(120,110,90,.055) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(120,110,90,.04) 1.5px, transparent 1.5px);
+  background-size:26px 26px, 26px 26px;
+  background-position:0 0, 13px 13px;
+}
+@media (prefers-color-scheme: dark){
+  body{
+    background-image:
+      radial-gradient(rgba(255,250,235,.04) 1.5px, transparent 1.5px),
+      radial-gradient(rgba(255,250,235,.025) 1.5px, transparent 1.5px);
+  }
+}
+button{font-family:inherit;cursor:pointer;color:inherit;font-weight:700;-webkit-tap-highlight-color:transparent}
+input,textarea{font-family:inherit;font-size:16px;font-weight:500;color:var(--ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #5B8DB8;outline-offset:2px;border-radius:8px}
+#app{max-width:640px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:env(safe-area-inset-bottom)}
+@media(min-width:900px){#app{max-width:880px}}
+
+/* 画面が切り替わるときのふわっとした動き */
+.screen{animation:rise .28s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============ 画面1:みんなの一覧 ============ */
+.list-head{padding:30px 20px 12px}
+.brand{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:900;letter-spacing:.22em;color:var(--faint);
+}
+.brand::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.list-title{font-size:29px;font-weight:900;margin:10px 0 5px;letter-spacing:.01em}
+.list-sub{font-size:13.5px;color:var(--faint);line-height:1.7}
+.toolbar{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tool-btn{
+  border:1.5px solid var(--line);background:var(--card);border-radius:999px;
+  padding:9px 16px;font-size:13px;color:var(--sub);min-height:40px;
+  transition:transform .12s, box-shadow .12s;
+}
+.tool-btn:hover{box-shadow:var(--shadow-1)}
+.tool-btn:active{transform:scale(.96)}
+
+.list-body{padding:12px 20px 40px;display:grid;gap:13px}
+@media(min-width:900px){.list-body{grid-template-columns:1fr 1fr}}
+.person-card{
+  display:flex;align-items:center;gap:15px;background:var(--card);border:none;
+  border-radius:var(--radius-l);padding:17px 19px;text-align:left;
+  box-shadow:var(--shadow-1);transition:transform .15s, box-shadow .15s;
+}
+.person-card:hover{box-shadow:var(--shadow-2);transform:translateY(-1px)}
+.person-card:active{transform:scale(.96) rotate(-.5deg)}
+.add-card{
+  display:flex;align-items:center;justify-content:center;gap:10px;background:transparent;
+  border:2px dashed var(--line);border-radius:var(--radius-l);padding:19px;
+  font-size:15px;font-weight:900;color:var(--faint);min-height:60px;
+  transition:border-color .15s, color .15s;
+}
+.add-card:hover{border-color:var(--teal);color:var(--teal)}
+.chev{color:var(--line);font-size:24px;margin-left:auto;font-weight:500}
+
+/* ---- アバター ---- */
+.avatar{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.avatar.photo{border:3px solid var(--card);box-shadow:0 2px 8px rgba(62,52,32,.18)}
+
+/* ============ 画面2:その子のトピック一覧 ============ */
+.p-head{padding:18px 20px 8px}
+.back-link{background:none;border:none;color:var(--sub);font-size:14px;padding:6px 0 14px}
+.hero{
+  display:flex;align-items:center;gap:17px;background:var(--card);border:none;width:100%;text-align:left;
+  border-radius:var(--radius-l);padding:19px 21px;box-shadow:var(--shadow-1);
+  transition:box-shadow .15s;
+}
+.hero:hover{box-shadow:var(--shadow-2)}
+.hero-name{font-size:23px;font-weight:900;line-height:1.3;letter-spacing:.01em}
+.hero-note{font-size:14px;color:var(--sub);margin-top:3px;line-height:1.5}
+.hero-hint{font-size:11px;color:var(--faint);margin-top:5px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:17px 20px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
+.tile{
+  position:relative;border:none;border-radius:var(--radius-m);padding:18px 15px;min-height:136px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;color:#fff;text-align:left;
+  box-shadow:var(--shadow-1);transition:transform .15s, box-shadow .15s;overflow:hidden;
+}
+.tile:hover{box-shadow:var(--shadow-2);transform:translateY(-3px) rotate(.4deg)}
+.tile:active{transform:scale(.93) rotate(-1deg)}
+.tile.urgent{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--red),var(--shadow-1)}
+.tile-icon{font-size:31px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+.tile-title{font-size:17px;font-weight:900;line-height:1.3;letter-spacing:.01em}
+.tile-desc{font-size:11.5px;opacity:.92;line-height:1.45;font-weight:500}
+.tile-badge{
+  position:absolute;top:11px;right:11px;background:rgba(255,255,255,.28);
+  font-size:11px;font-weight:900;border-radius:999px;padding:3px 9px;backdrop-filter:blur(4px);
+}
+.tile-tools{position:absolute;top:9px;right:9px;display:flex;gap:6px}
+.tile-tool{
+  width:34px;height:34px;border-radius:11px;border:none;background:rgba(255,255,255,.9);
+  color:#33302B;font-size:14px;display:flex;align-items:center;justify-content:center;
+}
+.add-tile{
+  border:2px dashed var(--line);background:transparent;border-radius:var(--radius-m);min-height:136px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:var(--faint);
+  transition:border-color .15s, color .15s;
+}
+.add-tile:hover{border-color:var(--teal);color:var(--teal)}
+.footer-hint{text-align:center;font-size:12px;color:var(--faint);padding:8px 32px 36px;line-height:1.7}
+
+/* ============ 画面3:トピックの中身 ============ */
+.d-head{padding:18px 20px 24px;color:#fff;border-radius:0 0 30px 30px;box-shadow:var(--shadow-1)}
+.d-back{
+  background:rgba(255,255,255,.22);border:none;color:#fff;font-size:14px;
+  border-radius:999px;padding:10px 18px;margin-bottom:16px;min-height:42px;backdrop-filter:blur(4px);
+}
+.d-row{display:flex;align-items:center;gap:15px}
+.d-person{font-size:14px;opacity:.92}
+.d-title{font-size:27px;font-weight:900;margin-top:2px;letter-spacing:.01em}
+.d-body{padding:20px 20px 36px;display:flex;flex-direction:column;gap:13px;max-width:640px;margin:0 auto}
+.entry{background:var(--card);border-radius:var(--radius-s);padding:15px 17px;box-shadow:var(--shadow-1)}
+.entry-label{font-size:13px;font-weight:900;margin-bottom:5px;letter-spacing:.02em}
+.entry-value{font-size:18px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.empty{text-align:center;color:var(--faint);font-size:14px;line-height:1.9;padding:34px 0}
+.big-btn{
+  border:none;border-radius:999px;padding:15px 18px;font-size:16px;font-weight:900;min-height:50px;
+  transition:transform .12s, filter .12s;
+}
+.big-btn:active{transform:scale(.94)}
+.big-btn:hover{filter:brightness(1.04)}
+
+/* ---- 編集フォーム ---- */
+.edit-card{background:var(--card);border-radius:var(--radius-s);padding:15px;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow-1)}
+.input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;resize:vertical;line-height:1.65;background:var(--card)}
+.input:focus,.textarea:focus{border-color:var(--teal)}
+.remove-link{align-self:flex-end;background:none;border:none;color:var(--danger);font-size:12.5px;padding:7px}
+.danger-link{background:none;border:none;color:var(--danger);font-size:13px;margin-top:12px;width:100%;padding:12px}
+.btn-row{display:flex;gap:10px;margin-top:12px}
+
+/* ---- モーダル(編集用の小窓) ---- */
+.overlay{
+  position:fixed;inset:0;background:rgba(40,35,28,.5);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:50;
+  animation:fadein .2s ease both;
+}
+@keyframes fadein{from{opacity:0}}
+.modal{
+  background:var(--card);border-radius:var(--radius-l);padding:24px;width:100%;max-width:440px;
+  max-height:86vh;overflow-y:auto;box-shadow:var(--shadow-2);
+  animation:pop .26s cubic-bezier(.2,.7,.3,1.05) both;
+}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(10px)}}
+.modal h2{font-size:19px;font-weight:900;margin-bottom:16px}
+.m-label{font-size:12.5px;font-weight:900;color:var(--faint);margin:12px 0 7px;letter-spacing:.04em}
+.pick-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.emoji-btn{font-size:22px;width:46px;height:46px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);transition:transform .1s}
+.emoji-btn:active{transform:scale(.92)}
+.emoji-btn.on{border-color:var(--teal);background:rgba(47,143,131,.12);box-shadow:0 0 0 1px var(--teal)}
+.color-btn{width:40px;height:40px;border-radius:50%;border:3px solid transparent;transition:transform .1s}
+.color-btn:active{transform:scale(.9)}
+.color-btn.on{border-color:var(--ink);transform:scale(1.08)}
+.photo-btn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:10px 16px;font-size:13.5px;color:var(--sub);min-height:42px}
+
+/* ---- 読み込みスピナー ---- */
+.spinner{display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--faint);font-size:13.5px;font-weight:700}
+.spinner::before{content:"🌸";font-size:36px;animation:spin 1.4s ease-in-out infinite}
+@keyframes spin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.15)}100%{transform:rotate(360deg) scale(1)}}
+
+/* ---- 自動保存トースト ---- */
+.toast{
+  position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--ink);color:var(--bg);font-size:13px;font-weight:900;
+  border-radius:999px;padding:12px 22px;box-shadow:var(--shadow-2);z-index:100;
+  opacity:0;transition:opacity .25s, transform .25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---- 動きを減らす設定の端末では、アニメーションをオフに ---- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+
+
+/* ============ テーマカラー(設定から選べる4色) ============ */
+/* 背景の色味はライトモードのときだけ変更(ダークモードでは夜の配色を優先) */
+@media (prefers-color-scheme: light){
+  body[data-theme="sakura"]{--bg:#FAF0F1}
+  body[data-theme="sora"]{--bg:#EDF3F8}
+  body[data-theme="wakaba"]{--bg:#EFF5EC}
+}
+/* アクセント色はライト・ダーク共通 */
+body[data-theme="sakura"]{--teal:#D9707E}
+body[data-theme="sora"]{--teal:#4E8FB8}
+body[data-theme="wakaba"]{--teal:#4E9A6E}
+
+/* ============ 文字サイズ(標準 / 大きめ / 特大) ============ */
+body[data-fs="l"] .entry-value{font-size:21px}
+body[data-fs="l"] .entry-label{font-size:15px}
+body[data-fs="l"] .tile-title{font-size:19px}
+body[data-fs="l"] .tile-desc{font-size:13px}
+body[data-fs="l"] .hero-name{font-size:25px}
+body[data-fs="l"] .hero-note,body[data-fs="l"] .list-sub{font-size:15.5px}
+body[data-fs="l"] .d-title{font-size:29px}
+body[data-fs="l"] .input,body[data-fs="l"] .textarea,body[data-fs="l"] .big-btn{font-size:18px}
+
+body[data-fs="xl"] .entry-value{font-size:24px}
+body[data-fs="xl"] .entry-label{font-size:17px}
+body[data-fs="xl"] .tile-title{font-size:21px}
+body[data-fs="xl"] .tile-desc{font-size:14px}
+body[data-fs="xl"] .hero-name{font-size:27px}
+body[data-fs="xl"] .hero-note,body[data-fs="xl"] .list-sub{font-size:17px}
+body[data-fs="xl"] .d-title{font-size:31px}
+body[data-fs="xl"] .input,body[data-fs="xl"] .textarea,body[data-fs="xl"] .big-btn{font-size:20px}
+
+/* ============ 設定モーダルの部品 ============ */
+.seg{display:flex;gap:7px}
+.seg-btn{
+  flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:13px;
+  padding:11px 6px;font-size:14px;color:var(--sub);min-height:46px;transition:all .12s;
+}
+.seg-btn.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.theme-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:none;border:none;font-size:11.5px;font-weight:700;color:var(--sub);padding:4px;
+}
+.theme-dot{width:42px;height:42px;border-radius:50%;border:3px solid transparent;transition:transform .1s}
+.theme-btn.on .theme-dot{border-color:var(--ink);transform:scale(1.08)}
+.theme-btn.on{color:var(--ink)}
+
+
+
+
+/* ============ 覗き見ブラー(バックグラウンド時) ============ */
+body.peek-guard #app{ filter:blur(22px); transition:filter .15s }
+
+/* ロック画面の試行待ちカウントダウン */
+.lock-wait{font-size:12.5px;color:var(--danger);font-weight:700;margin-top:8px;min-height:18px}
+
+/* ============ ホーム(チーム一覧)画面 ============ */
+.greet{font-size:14px;color:var(--sub);margin-top:10px;line-height:1.6}
+.team-card{
+  display:flex;align-items:center;gap:15px;background:var(--card);border:none;width:100%;
+  border-radius:var(--radius-l);padding:17px 19px;text-align:left;
+  box-shadow:var(--shadow-1);transition:transform .15s, box-shadow .15s;position:relative;overflow:hidden;
+}
+.team-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent,#2F8F83)}
+.team-card:hover{box-shadow:var(--shadow-2);transform:translateY(-2px)}
+.team-card:hover .team-emoji{animation:wiggle .5s ease}
+@keyframes wiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg)}60%{transform:rotate(7deg)}}
+.team-card:active{transform:scale(.96) rotate(.5deg)}
+.team-emoji{
+  width:56px;height:56px;border-radius:18px;background:var(--bg);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+}
+.team-name{font-size:19px;font-weight:900;line-height:1.3}
+.team-sub{font-size:12.5px;color:var(--faint);margin-top:3px}
+.notice{
+  background:rgba(47,143,131,.1);border:1.5px solid var(--teal);border-radius:var(--radius-s);
+  padding:13px 15px;font-size:13px;line-height:1.7;color:var(--ink);margin-bottom:13px;
+}
+
+/* ============ ログイン・グループ参加の画面 ============ */
+.login-logo{font-size:54px;margin-bottom:8px;display:inline-block;animation:bounce-in .6s cubic-bezier(.3,1.6,.4,1) both}
+@keyframes bounce-in{from{opacity:0;transform:scale(.4) translateY(10px)}to{opacity:1;transform:scale(1)}}
+.login-note{font-size:12px;color:var(--faint);line-height:1.8;margin-top:18px}
+.google-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);
+  border-radius:999px;padding:14px;font-size:15.5px;font-weight:800;min-height:52px;
+  box-shadow:var(--shadow-1);transition:box-shadow .15s;
+}
+.google-btn:hover{box-shadow:var(--shadow-2)}
+.g-mark{font-weight:900;font-size:18px;color:#4285F4}
+.signed-as{font-size:12px;color:var(--faint);margin-top:14px;word-break:break-all}
+.text-link{background:none;border:none;color:var(--sub);font-size:13px;text-decoration:underline;margin-top:14px}
+.check-row{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--sub);margin:4px 0 12px}
+.check-row input{width:18px;height:18px;accent-color:var(--teal)}
+
+/* ---- メンバー管理 ---- */
+.member-row{
+  display:flex;align-items:center;gap:10px;background:var(--bg);
+  border-radius:12px;padding:10px 13px;margin-bottom:8px;font-size:14px;word-break:break-all;
+}
+.member-x{margin-left:auto;background:none;border:none;color:var(--danger);font-size:16px;padding:4px 8px}
+.owner-tag{font-size:10.5px;font-weight:900;color:#fff;background:var(--teal);border-radius:999px;padding:2px 8px;flex-shrink:0}
+.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#5BBD7E;margin-right:5px}
+
+/* ============ ロック画面(パスコード設定時) ============ */
+.lock-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.lock-card{background:var(--card);border-radius:var(--radius-l);padding:34px 26px;width:100%;max-width:380px;box-shadow:var(--shadow-2);text-align:center}
+.lock-icon{font-size:44px;margin-bottom:10px}
+.lock-title{font-size:20px;font-weight:900;margin-bottom:6px}
+.lock-sub{font-size:13px;color:var(--faint);line-height:1.7;margin-bottom:18px}
+.lock-input{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:14px;font-size:18px;text-align:center;letter-spacing:.3em;background:var(--card);margin-bottom:12px}
+.lock-input:focus{border-color:var(--teal)}
+.lock-error{color:var(--danger);font-size:13px;font-weight:700;margin-bottom:10px;min-height:18px}
+.lock-forgot{background:none;border:none;color:var(--faint);font-size:12px;margin-top:16px;text-decoration:underline}
+
+/* ============ 印刷(印刷・PDFボタン用) ============ */
+.print-area{display:none}
+@media print{
+  body{background:#fff}
+  #app .screen,.toast{display:none!important}
+  .print-area{display:block;padding:10mm;font-size:12pt;color:#000}
+  .print-area h1{font-size:20pt;margin-bottom:2mm}
+  .print-area .pr-note{font-size:11pt;color:#444;margin-bottom:6mm}
+  .pr-topic{margin-bottom:6mm;break-inside:avoid}
+  .pr-topic h2{font-size:13pt;padding:2mm 3mm;border-radius:2mm;color:#fff;margin-bottom:2mm}
+  .pr-entry{margin:0 0 2mm 3mm}
+  .pr-entry b{font-size:10.5pt}
+  .pr-entry div{font-size:11.5pt;line-height:1.6;white-space:pre-wrap}
+}
